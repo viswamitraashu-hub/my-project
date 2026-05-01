@@ -1,0 +1,23 @@
+const express = require("express");
+const userRoutes = require("./userroutes");
+const requestLogger = require("./midleware");
+const loginRoute = require("./loginroute");
+const jsonResponse = require("./responseformat");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+app.use(requestLogger);
+
+app.get("/", (req, res) => {
+  return res.json(jsonResponse("Server Running"));
+});
+
+app.use("/users", userRoutes);
+app.use("/login", loginRoute);
+
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+console.log(`Server running at http://localhost:${PORT}/`);
