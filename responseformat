@@ -1,0 +1,14 @@
+function jsonResponse(message, data = null) {
+  const response = {
+    message,
+    time: new Date().toLocaleString(),
+  };
+
+  if (data !== null) {
+    response.data = data;
+  }
+
+  return response;
+}
+
+module.exports = jsonResponse;
