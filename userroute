@@ -1,0 +1,46 @@
+const express = require("express");
+const router = express.Router();
+const jsonResponse = require("./responseformat");
+let users = [];
+
+router.get("/", (req, res) => {
+  return res.json(jsonResponse("Users fetched successfully", users));
+});
+
+router.post("/", (req, res) => {
+  const { name, email } = req.body;
+
+  if (!name || !email) {
+    return res
+      .status(400)
+      .json(jsonResponse("Name and email are required"));
+  }
+
+  const isDuplicateEmail = users.some((user) => user.email === email);
+  if (isDuplicateEmail) {
+    return res.status(400).json(jsonResponse("Email already exists"));
+  }
+
+  const newUser = {
+    id: users.length > 0 ? users[users.length - 1].id + 1 : 1,
+    name,
+    email,
+  };
+
+  users.push(newUser);
+  return res.status(201).json(jsonResponse("User added successfully", newUser));
+});
+
+router.delete("/:id", (req, res) => {
+  const userId = Number(req.params.id);
+  const userIndex = users.findIndex((user) => user.id === userId);
+
+  if (userIndex === -1) {
+    return res.status(404).json(jsonResponse("User not found"));
+  }
+
+  const deletedUser = users.splice(userIndex, 1)[0];
+  return res.json(jsonResponse("User deleted", deletedUser));
+});
+
+module.exports = router;
